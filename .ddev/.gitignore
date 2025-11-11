@@ -1,0 +1,25 @@
+# DDEV auto-generated files
+/.ddev-docker-compose-*
+/.global_commands
+/.homeadditions
+/.ssh
+/.web_commands
+/apache
+/commands/.global/*
+/commands/.project/*
+/commands/host/*
+/commands/web/*
+/db_snapshots
+/homeadditions
+/import-db
+/import.yaml
+/mutagen
+/nginx
+/nginx_full
+/postgres
+/redis
+/sequelpro.spf
+/traefik
+/.webimageBuild
+/bin
+/monitoring

@@ -1,0 +1,14 @@
+services:
+  web:
+    ports:
+      # Vite dev server
+      #- "5173:5173"
+      # Vite dev server (HTTPS)
+      #- "5174:5174"
+      # Storybook
+      #- "6006:6006"
+      # Storybook (HTTPS)
+      #- "6007:6007"
+    environment:
+      # Ensure Vite binds to 0.0.0.0 to be accessible from host
+      - VITE_HOST=0.0.0.0
