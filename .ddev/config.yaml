@@ -1,10 +1,9 @@
-name: ui-library
+name: ui-lib
 type: php
 docroot: .
 php_version: "8.3"
 webserver_type: generic
 xdebug_enabled: false
-additional_hostnames: []
 additional_fqdns: []
 database:
     type: mariadb
@@ -16,24 +15,25 @@ nodejs_version: "22"
 
 web_environment: []
 
-# Router port configuration
 router_http_port: "80"
 router_https_port: "443"
 
 webimage_extra_packages: [build-essential]
 disable_settings_management: true
 
-# Web container additional exposed ports
+
+additional_hostnames: []
+
 web_extra_exposed_ports:
-  - name: vite
+  - name: storybook
+    container_port: 6006
+    http_port: 80
+    https_port: 443
+  - name: vite-server
     container_port: 5173
     http_port: 5173
     https_port: 5174
-  - name: storybook
-    container_port: 6006
-    http_port: 6006
-    https_port: 6007
 
 hooks:
   post-start:
-    - exec: npm install
+    - exec: pnpm install
