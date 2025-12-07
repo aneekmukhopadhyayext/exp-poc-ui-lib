@@ -15,12 +15,13 @@ This guide provides comprehensive instructions for integrating the UI Sandbox Li
 
 ## Building the Library
 
-Before using the library in your Next.js project, build it for distribution:
+This library uses **DDEV** for local development. Before using the library in your Next.js project, build it for distribution:
 
 ```bash
-cd /path/to/UISandboxLibrary
-pnpm install
-pnpm run build:lib
+cd /path/to/exp-poc-ui-lib
+ddev start                    # Start DDEV environment (first time)
+ddev pnpm install             # Install dependencies (runs automatically on start)
+ddev pnpm run build:lib       # Build the library
 ```
 
 This creates the distributable files in the `dist/` directory:
@@ -28,6 +29,8 @@ This creates the distributable files in the `dist/` directory:
 - `dist/index.cjs` - CommonJS bundle
 - `dist/index.d.ts` - TypeScript declarations
 - `dist/style.css` - Compiled styles
+
+**Note**: Dependencies are automatically installed via DDEV's post-start hook, but you can manually run `ddev pnpm install` if needed.
 
 ## Installation
 
@@ -39,7 +42,7 @@ Best for local development and testing:
 // your-nextjs-app/package.json
 {
   "dependencies": {
-    "ui-sandbox-library": "file:../UISandboxLibrary"
+    "ui-sandbox-library": "file:../exp-poc-ui-lib"
   }
 }
 ```
@@ -49,7 +52,7 @@ Then install:
 pnpm install
 ```
 
-**Note**: Whenever you rebuild the library (`pnpm run build:lib`), reinstall it in your Next.js project:
+**Note**: Whenever you rebuild the library (run `ddev pnpm run build:lib` in the library project), reinstall it in your Next.js project:
 ```bash
 pnpm install --force
 ```
@@ -753,12 +756,12 @@ Override theme colors in your Tailwind config or CSS variables:
 When developing components in the library and using them in Next.js:
 
 1. **Make changes** to the library components
-2. **Rebuild the library**:
+2. **Rebuild the library** (in the library project):
    ```bash
-   cd UISandboxLibrary
-   pnpm run build:lib
+   cd exp-poc-ui-lib
+   ddev pnpm run build:lib
    ```
-3. **Reinstall in Next.js**:
+3. **Reinstall in Next.js** (in your Next.js project):
    ```bash
    cd your-nextjs-app
    pnpm install --force
@@ -773,9 +776,9 @@ When developing components in the library and using them in Next.js:
 For faster development, you can use `pnpm link`:
 
 ```bash
-# In the library directory
-cd UISandboxLibrary
-pnpm link --global
+# In the library directory (inside DDEV)
+cd exp-poc-ui-lib
+ddev pnpm link --global
 
 # In your Next.js project
 cd your-nextjs-app
@@ -783,6 +786,8 @@ pnpm link --global ui-sandbox-library
 ```
 
 Now changes to the library will be reflected immediately (you may still need to restart the Next.js dev server).
+
+**Note**: When using DDEV, the linked package is inside the container, so you'll still need to rebuild with `ddev pnpm run build:lib` for changes to take effect.
 
 ## Troubleshooting
 
@@ -800,9 +805,42 @@ Now changes to the library will be reflected immediately (you may still need to 
 
 ### Module Not Found
 
-- Rebuild the library: `pnpm run build:lib`
-- Reinstall in Next.js: `pnpm install --force`
+- Rebuild the library: `ddev pnpm run build:lib` (in the library project)
+- Reinstall in Next.js: `pnpm install --force` (in your Next.js project)
 - Check that `package.json` dependency path is correct
+- Ensure DDEV is running: `ddev start` (in the library project)
+
+## DDEV Development Environment
+
+The UI Sandbox Library uses DDEV for containerized development. This ensures consistent development environments across different machines.
+
+### Key Points
+
+- **All library development commands** must be run through DDEV using the `ddev pnpm` prefix
+- **Your Next.js consuming project** uses regular `pnpm` commands (unless it also uses DDEV)
+- DDEV automatically installs dependencies when the environment starts
+- Storybook and Vite dev server are accessible through DDEV's exposed ports
+
+### Quick Reference
+
+```bash
+# Library project (uses DDEV)
+ddev start                      # Start the environment
+ddev pnpm run storybook        # Run Storybook
+ddev pnpm run dev              # Run Vite dev server
+ddev pnpm run build:lib        # Build for distribution
+ddev stop                       # Stop the environment
+
+# Your Next.js project (regular pnpm)
+pnpm install                    # Install dependencies
+pnpm run dev                    # Run Next.js dev server
+```
+
+### DDEV URLs
+
+When DDEV is running, access the library at:
+- **Storybook**: https://ui-lib.ddev.site
+- **Vite Dev Server**: https://ui-lib.ddev.site:5173
 
 ## Additional Resources
 
@@ -810,6 +848,7 @@ Now changes to the library will be reflected immediately (you may still need to 
 - [next-drupal Documentation](https://next-drupal.org/)
 - [Tailwind CSS Configuration](https://tailwindcss.com/docs/configuration)
 - [shadcn/ui Documentation](https://ui.shadcn.com/)
+- [DDEV Documentation](https://ddev.readthedocs.io/)
 
 ## Support
 

@@ -18,7 +18,7 @@ web_environment: []
 router_http_port: "80"
 router_https_port: "443"
 
-webimage_extra_packages: [build-essential]
+webimage_extra_packages: []
 disable_settings_management: true
 
 

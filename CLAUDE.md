@@ -8,29 +8,39 @@ This is a React UI component library built with Vite, TypeScript, and Tailwind C
 
 **Dual-Mode Build System**: This project can operate both as a standalone application AND as a consumable library for other projects.
 
+**Development Environment**: This project uses **DDEV** for local development with Node.js 22 and pnpm. All pnpm commands should be run through ddev using `ddev pnpm`.
+
 ## Development Commands
+
+### DDEV Environment
+```bash
+ddev start                # Start the DDEV environment
+ddev stop                 # Stop the DDEV environment
+ddev restart              # Restart the DDEV environment
+ddev ssh                  # SSH into the web container
+```
 
 ### Running the Application
 ```bash
-pnpm run dev              # Start Vite dev server (default: http://localhost:5173)
-pnpm run build            # Type-check with tsc and build for production
-pnpm run build:app        # Build as standalone application
-pnpm run build:lib        # Build as consumable library (dist/)
-pnpm run preview          # Preview production build locally
+ddev pnpm run dev              # Start Vite dev server (http://localhost:5173)
+ddev pnpm run build            # Type-check with tsc and build for production
+ddev pnpm run build:app        # Build as standalone application
+ddev pnpm run build:lib        # Build as consumable library (dist/)
+ddev pnpm run preview          # Preview production build locally
 ```
 
 ### Storybook
 ```bash
-pnpm run storybook        # Start Storybook dev server on port 6006
-pnpm run build-storybook  # Build static Storybook site
+ddev pnpm run storybook        # Start Storybook dev server on port 6006
+ddev pnpm run build-storybook  # Build static Storybook site
 ```
 
 ### Code Quality
 ```bash
-pnpm run lint             # Run ESLint on all files
+ddev pnpm run lint             # Run ESLint on all files
 ```
 
-**Note**: This project uses pnpm as the package manager.
+**Note**: This project uses pnpm as the package manager, managed through DDEV. The `ddev pnpm` command wrapper ensures all commands run in the containerized environment.
 
 ## Architecture
 
@@ -68,7 +78,7 @@ This project is configured as a dual-mode build system:
 **Application Mode** (default):
 - Entry: `src/main.tsx`
 - Output: Standard Vite app build in `dist/`
-- Run with: `pnpm run dev` or `pnpm run build:app`
+- Run with: `ddev pnpm run dev` or `ddev pnpm run build:app`
 
 **Library Mode**:
 - Entry: `src/index.ts`
@@ -77,7 +87,7 @@ This project is configured as a dual-mode build system:
   - `dist/index.cjs` - CommonJS format
   - `dist/index.d.ts` - TypeScript declarations
   - `dist/style.css` - Compiled styles
-- Build with: `pnpm run build:lib`
+- Build with: `ddev pnpm run build:lib`
 - Configured in `vite.config.ts` (mode: 'lib')
 - TypeScript declarations: `tsconfig.lib.json`
 
@@ -148,7 +158,7 @@ When adding shadcn/ui components:
 4. Component config is in `components.json` (style: "new-york", iconLibrary: "lucide")
 5. Create corresponding Storybook stories in `src/stories/[component-name]/`
 6. **IMPORTANT**: Export the new component in `src/index.ts` for library consumption
-7. After adding components, rebuild the library with `pnpm run build:lib`
+7. After adding components, rebuild the library with `ddev pnpm run build:lib`
 
 **Example Adding a New Component**:
 ```typescript
@@ -192,9 +202,32 @@ export default function Page() {
 
 **Important**: Consuming projects must configure Tailwind to scan the library's components. See `USAGE.md` for complete integration instructions including Tailwind configuration and next-drupal examples.
 
+## DDEV Configuration
+
+This project uses DDEV for containerized local development:
+
+### Configuration Details
+- **Project Name**: `ui-lib`
+- **Type**: Generic PHP webserver (Node.js focused)
+- **Node.js Version**: 22
+- **PHP Version**: 8.3 (required by DDEV, not used for the app)
+- **Database**: Omitted (not needed for this project)
+- **pnpm**: Installed via custom Dockerfile (`.ddev/web-build/Dockerfile.pnpm`)
+
+### Exposed Ports
+- **Storybook**: Port 6006 (accessible at https://ui-lib.ddev.site)
+- **Vite Dev Server**: Port 5173 (accessible at https://ui-lib.ddev.site:5173)
+
+### Post-Start Hooks
+- Automatically runs `pnpm install` after container startup
+
+### Custom Commands
+- `ddev pnpm`: Wrapper command to run pnpm inside the web container (`.ddev/commands/web/pnpm`)
+
 ## Notes
 - This project uses the **@vitejs/plugin-react-swc** plugin (React Compiler is NOT compatible with SWC)
 - Tailwind CSS v4 requires the `@tailwindcss/vite` plugin instead of PostCSS configuration
 - Color system uses OKLCH color space for better perceptual uniformity
 - Dark mode is implemented with a custom variant `@custom-variant dark (&:is(.dark *))`
-- Package manager: **pnpm** (uses `pnpm-lock.yaml`)
+- Package manager: **pnpm** (uses `pnpm-lock.yaml`) managed through DDEV
+- All development commands must be run through DDEV using `ddev pnpm` prefix

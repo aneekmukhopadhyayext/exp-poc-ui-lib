@@ -28,41 +28,47 @@ A modern, production-ready React UI component library built with Vite, TypeScrip
 
 ## Getting Started
 
+This project uses **DDEV** for containerized local development with Node.js 22 and pnpm.
+
+### Prerequisites
+
+- [DDEV](https://ddev.readthedocs.io/) installed on your system
+
 ### Installation
 
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd UISandboxLibrary
+cd exp-poc-ui-lib
 
-# Install dependencies (requires pnpm)
-pnpm install
+# Start DDEV environment (automatically installs dependencies)
+ddev start
 ```
 
 ### Development
 
 ```bash
-# Start Vite dev server (http://localhost:5173)
-pnpm run dev
+# Start Vite dev server (https://ui-lib.ddev.site:5173)
+ddev pnpm run dev
 
-# Start Storybook (http://localhost:6006)
-pnpm run storybook
+# Start Storybook (https://ui-lib.ddev.site)
+ddev pnpm run storybook
 
 # Run linting
-pnpm run lint
+ddev pnpm run lint
 ```
 
 ### Building
 
 ```bash
 # Build as standalone application
-pnpm run build:app
+ddev pnpm run build:app
 
 # Build as distributable library
-pnpm run build:lib
+ddev pnpm run build:lib
 
 # Preview production build
-pnpm run preview
+ddev pnpm run preview
 ```
 
 ## Available Components
@@ -107,7 +113,7 @@ See [USAGE.md](./USAGE.md) for complete API documentation and integration exampl
 // package.json
 {
   "dependencies": {
-    "ui-sandbox-library": "file:../UISandboxLibrary"
+    "ui-sandbox-library": "file:../exp-poc-ui-lib"
   }
 }
 ```
@@ -133,7 +139,11 @@ See [USAGE.md](./USAGE.md) for complete Tailwind configuration and next-drupal i
 ## Project Structure
 
 ```
-UISandboxLibrary/
+exp-poc-ui-lib/
+├── .ddev/                       # DDEV configuration
+│   ├── config.yaml              # Main DDEV config
+│   ├── commands/web/pnpm        # Custom pnpm command
+│   └── web-build/               # Container customization
 ├── src/
 │   ├── components/
 │   │   └── ui/                  # UI component library
@@ -159,7 +169,8 @@ UISandboxLibrary/
 ├── tsconfig.lib.json            # Library build config
 ├── components.json              # shadcn/ui configuration
 ├── USAGE.md                     # Integration guide
-└── CLAUDE.md                    # Development guide
+├── CLAUDE.md                    # Development guide
+└── README.md                    # This file
 ```
 
 ## Package Exports
@@ -214,24 +225,38 @@ Enable dark mode by adding the `.dark` class to a parent element:
 </div>
 ```
 
-## DDEV Development (Optional)
+## DDEV Development Environment
 
-This project includes DDEV configuration for containerized development:
+This project **requires DDEV** for local development. DDEV provides a containerized environment with Node.js 22 and pnpm.
+
+### DDEV Commands
 
 ```bash
-# Start DDEV environment
-ddev start
+# Environment management
+ddev start                       # Start DDEV environment
+ddev stop                        # Stop DDEV environment
+ddev restart                     # Restart DDEV environment
+ddev ssh                         # SSH into the web container
 
-# Run dev server in DDEV
-ddev dev
-
-# Run Storybook in DDEV
-ddev storybook
+# Development commands (all pnpm commands must use ddev prefix)
+ddev pnpm run dev                # Start Vite dev server
+ddev pnpm run storybook          # Start Storybook
+ddev pnpm run build:lib          # Build as library
+ddev pnpm run build:app          # Build as application
+ddev pnpm run lint               # Run ESLint
 
 # Access URLs
-# App: http://localhost:5173 or https://uisandboxlibrary.ddev.site
-# Storybook: http://localhost:6006
+# Storybook: https://ui-lib.ddev.site
+# Vite Dev Server: https://ui-lib.ddev.site:5173
 ```
+
+### DDEV Configuration Details
+
+- **Project Name**: `ui-lib`
+- **Node.js Version**: 22
+- **Package Manager**: pnpm (installed via custom Dockerfile)
+- **Exposed Ports**: Storybook (6006), Vite (5173)
+- **Auto-Install**: Dependencies are automatically installed on `ddev start`
 
 ## Adding New Components
 
@@ -239,7 +264,7 @@ ddev storybook
 2. Follow shadcn/ui patterns (CVA variants, Radix primitives)
 3. Export in `src/index.ts`
 4. Create Storybook story in `src/stories/[name]/`
-5. Rebuild library: `pnpm run build:lib`
+5. Rebuild library: `ddev pnpm run build:lib`
 
 Example:
 ```typescript
@@ -251,16 +276,18 @@ export { cn } from "./lib/utils"
 
 ## Scripts Reference
 
+**Note**: All commands must be run through DDEV using `ddev pnpm` prefix.
+
 | Command | Description |
 |---------|-------------|
-| `pnpm run dev` | Start Vite dev server |
-| `pnpm run build` | Full production build |
-| `pnpm run build:app` | Build as application |
-| `pnpm run build:lib` | Build as library |
-| `pnpm run preview` | Preview production build |
-| `pnpm run storybook` | Start Storybook server |
-| `pnpm run build-storybook` | Build static Storybook |
-| `pnpm run lint` | Run ESLint |
+| `ddev pnpm run dev` | Start Vite dev server |
+| `ddev pnpm run build` | Full production build |
+| `ddev pnpm run build:app` | Build as application |
+| `ddev pnpm run build:lib` | Build as library |
+| `ddev pnpm run preview` | Preview production build |
+| `ddev pnpm run storybook` | Start Storybook server |
+| `ddev pnpm run build-storybook` | Build static Storybook |
+| `ddev pnpm run lint` | Run ESLint |
 
 ## TypeScript Configuration
 
@@ -271,15 +298,18 @@ Three TypeScript configurations:
 
 ## Contributing
 
-1. Add components following shadcn/ui patterns
-2. Use CVA for variant styling
-3. Ensure TypeScript strict mode compliance
-4. Create Storybook stories for new components
-5. Export components in `src/index.ts`
-6. Run `pnpm run lint` before committing
+1. Ensure DDEV is running: `ddev start`
+2. Add components following shadcn/ui patterns
+3. Use CVA for variant styling
+4. Ensure TypeScript strict mode compliance
+5. Create Storybook stories for new components
+6. Export components in `src/index.ts`
+7. Run `ddev pnpm run lint` before committing
+8. Build the library: `ddev pnpm run build:lib`
 
 ## Resources
 
+- [DDEV Documentation](https://ddev.readthedocs.io/)
 - [Vite Documentation](https://vite.dev/)
 - [React 19 Documentation](https://react.dev/)
 - [Tailwind CSS v4](https://tailwindcss.com/)
