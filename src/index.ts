@@ -1,4 +1,7 @@
 // Export all UI components
+export { Space } from "./components/ui/space/space"
+export type { SpaceProps, SpaceDirection } from "./components/ui/space/space"
+
 export { Button } from "./components/ui/button/button"
 export { buttonVariants } from "./components/ui/button/button-variants"
 
